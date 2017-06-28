@@ -37,7 +37,8 @@ HEADERS += \
     noaa/noaaparser.h \
     db/db.h \
     globals.h \
-    db/station.h
+    db/station.h \
+    db/windentry.h
 
 FORMS += \
         mainwindow.ui
