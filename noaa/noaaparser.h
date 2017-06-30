@@ -11,39 +11,64 @@ class NoaaParser : public std::iterator<std::input_iterator_tag,WindEntry>
 {
 private:
     WindEntry current;
-    int64_t index;
 
 
     io::LineReader*  lineReader;
-    void readLine();
-
-    NoaaParser(NoaaParser &p);
-    NoaaParser(NoaaParser *p,int64_t index) {
-        lineReader = p->lineReader;
-        this->index = index;
-
-    }
+    bool readLine();
 
 
 public:
     NoaaParser(QString file);
     ~NoaaParser();
 
-    NoaaParser& operator++ ();
-    WindEntry& operator*() {
-        return current;
+    struct nit : public std::iterator<std::input_iterator_tag,WindEntry> {
+        int64_t index;
+        NoaaParser& parser;
+
+        nit(NoaaParser& p) :parser(p), index(0) {
+        }
+
+        nit(const nit &i) : parser(i.parser), index(i.index) {
+        }
+
+        nit(const nit &i, int64_t idx) : parser(i.parser), index(idx) {
+        }
+
+        WindEntry& operator*() {
+            return parser.current;
+        }
+
+        bool operator ==(nit& p) {
+            return p.index == index;
+        }
+        bool operator !=(nit &p) {
+            return p.index != index;
+        }
+
+        nit end() {
+            return nit(parser,-1);
+        }
+
+        nit begin() {
+            return nit(parser,0);
+        }
+
+        nit& operator++ () {
+            if (parser.readLine()) {
+                index++;
+            } else {
+                index = -1;
+            }
+            return *this;
+        }
+
+
+    };
+
+    nit iterator() {
+        return nit(*this);
     }
 
-    NoaaParser* end() {
-        return new NoaaParser(this,-1);
-    }
-
-    bool operator ==(NoaaParser& p) {
-        return p.index == index;
-    }
-    bool operator !=(NoaaParser &p) {
-        return p.index != index;
-    }
 
 };
 

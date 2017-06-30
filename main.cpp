@@ -20,19 +20,17 @@ int main(int argc, char *argv[])
     db.setSetting(QString("stationsFile"),QString("/stati.csv"));
 
 
-    NoaaParser parser("../files/062090-99999-2017");
-    NoaaParser* end = parser.end();
-    while (parser != *end) {
-        parser = ++parser;
-        console->info((*parser).to_s());
+    NoaaParser parser("../files/062090-99999-2017_2");
+    for (WindEntry& we : parser.iterator()) {
+       console->info(we.to_s());
+
     }
-    delete end;
 
 
 
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+//    QApplication a(argc, argv);
+//    MainWindow w;
+//    w.show();
 
-    return a.exec();
+//    return a.exec();
 }
